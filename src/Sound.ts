@@ -6,6 +6,11 @@ export class Sound {
     this.beep(660, 90);
   }
 
+  eatBonus(): void {
+    this.beep(880, 80);
+    setTimeout(() => this.beep(1180, 90), 70);
+  }
+
   gameOver(): void {
     this.beep(220, 90);
     setTimeout(() => this.beep(140, 180), 100);

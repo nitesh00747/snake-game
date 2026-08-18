@@ -1,17 +1,20 @@
+import { Effects } from './Effects';
 import { Game } from './Game';
 import { InputHandler } from './InputHandler';
 import { Renderer } from './Renderer';
 import { Sound } from './Sound';
 import { TouchHandler } from './TouchHandler';
-import { GameStatus } from './types';
+import { FoodKind, GameStatus } from './types';
 
 const COLS = 60;
 const ROWS = 30;
 const BEST_SCORE_KEY = 'snake.bestScore';
 const RESUME_COUNTDOWN_STEPS = 3;
 const RESUME_COUNTDOWN_STEP_MS = 700;
+const SHAKE_ANIMATION_MS = 500;
 
 const canvas = document.getElementById('board') as HTMLCanvasElement;
+const boardWrapEl = document.querySelector('.board-wrap') as HTMLElement;
 const scoreEl = document.getElementById('score') as HTMLElement;
 const bestEl = document.getElementById('best') as HTMLElement;
 const overlayEl = document.getElementById('overlay') as HTMLElement;
@@ -22,6 +25,7 @@ let bestScore = Number(localStorage.getItem(BEST_SCORE_KEY) ?? 0);
 bestEl.textContent = String(bestScore);
 
 const sound = new Sound();
+const effects = new Effects();
 
 const game = new Game(COLS, ROWS, {
   onScoreChange(score) {
@@ -34,14 +38,31 @@ const game = new Game(COLS, ROWS, {
   },
   onStatusChange(status) {
     renderOverlay(status);
-    if (status === GameStatus.GameOver) sound.gameOver();
+    if (status === GameStatus.GameOver) {
+      sound.gameOver();
+      triggerShake();
+    }
   },
-  onEat() {
-    sound.eat();
+  onEat(at, kind) {
+    if (kind === FoodKind.Bonus) {
+      sound.eatBonus();
+      effects.burst(at, renderer.cellPixelSize, '#facc15');
+    } else {
+      sound.eat();
+      effects.burst(at, renderer.cellPixelSize, '#fb923c');
+    }
   },
 });
 
 const renderer = new Renderer(canvas, game.board);
+
+function triggerShake(): void {
+  boardWrapEl.classList.remove('shake');
+  // Force reflow so the animation restarts even if triggered again quickly.
+  void boardWrapEl.offsetWidth;
+  boardWrapEl.classList.add('shake');
+  setTimeout(() => boardWrapEl.classList.remove('shake'), SHAKE_ANIMATION_MS);
+}
 
 function renderOverlay(status: GameStatus): void {
   const messages: Partial<Record<GameStatus, [string, string]>> = {
@@ -117,8 +138,9 @@ new TouchHandler(canvas, {
 function draw(): void {
   renderer.clear(game.board);
   renderer.drawObstacles(game.board.obstacles);
-  renderer.drawFood(game.foodCell);
+  renderer.drawFood(game.foodCell, game.foodKind);
   renderer.drawSnake(game.snakeCells);
+  renderer.drawEffects(effects);
 }
 
 // Fixed-interval logic loop decoupled from rendering: the tick cadence
