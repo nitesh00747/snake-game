@@ -9,6 +9,7 @@ import { FoodKind, GameStatus } from './types';
 const COLS = 60;
 const ROWS = 30;
 const BEST_SCORE_KEY = 'snake.bestScore';
+const MUTED_KEY = 'snake.muted';
 const RESUME_COUNTDOWN_STEPS = 3;
 const RESUME_COUNTDOWN_STEP_MS = 700;
 const SHAKE_ANIMATION_MS = 500;
@@ -17,6 +18,7 @@ const canvas = document.getElementById('board') as HTMLCanvasElement;
 const boardWrapEl = document.querySelector('.board-wrap') as HTMLElement;
 const scoreEl = document.getElementById('score') as HTMLElement;
 const bestEl = document.getElementById('best') as HTMLElement;
+const muteToggleEl = document.getElementById('mute-toggle') as HTMLButtonElement;
 const overlayEl = document.getElementById('overlay') as HTMLElement;
 const overlayTitleEl = document.getElementById('overlay-title') as HTMLElement;
 const overlaySubtitleEl = document.getElementById('overlay-subtitle') as HTMLElement;
@@ -26,6 +28,22 @@ bestEl.textContent = String(bestScore);
 
 const sound = new Sound();
 const effects = new Effects();
+
+let muted = localStorage.getItem(MUTED_KEY) === 'true';
+
+function renderMuteToggle(): void {
+  sound.setMuted(muted);
+  muteToggleEl.textContent = `Sound: ${muted ? 'Off' : 'On'}`;
+  muteToggleEl.setAttribute('aria-pressed', String(muted));
+}
+
+muteToggleEl.addEventListener('click', () => {
+  muted = !muted;
+  localStorage.setItem(MUTED_KEY, String(muted));
+  renderMuteToggle();
+});
+
+renderMuteToggle();
 
 const game = new Game(COLS, ROWS, {
   onScoreChange(score) {
