@@ -1,10 +1,15 @@
 import type { Board } from './Board';
 import type { Snake } from './Snake';
-import type { Point } from './types';
+import { FoodKind, type Point } from './types';
+
+const BONUS_CHANCE = 0.25;
+const BONUS_LIFESPAN_TICKS = 30;
 
 /** Owns the single active food cell and knows how to relocate it off the snake. */
 export class Food {
   private position: Point;
+  private kind: FoodKind = FoodKind.Normal;
+  private ticksRemaining = Infinity;
 
   constructor(board: Board, snake: Snake) {
     this.position = Food.pickFreeCell(board, snake);
@@ -14,8 +19,21 @@ export class Food {
     return this.position;
   }
 
+  get currentKind(): FoodKind {
+    return this.kind;
+  }
+
   respawn(board: Board, snake: Snake): void {
     this.position = Food.pickFreeCell(board, snake);
+    this.kind = Math.random() < BONUS_CHANCE ? FoodKind.Bonus : FoodKind.Normal;
+    this.ticksRemaining = this.kind === FoodKind.Bonus ? BONUS_LIFESPAN_TICKS : Infinity;
+  }
+
+  /** A bonus food reverts to normal food in place once its timer runs out uneaten. */
+  tick(): void {
+    if (this.kind !== FoodKind.Bonus) return;
+    this.ticksRemaining -= 1;
+    if (this.ticksRemaining <= 0) this.kind = FoodKind.Normal;
   }
 
   private static pickFreeCell(board: Board, snake: Snake): Point {
