@@ -1,5 +1,6 @@
 import type { Board } from './Board';
-import type { Point } from './types';
+import type { Effects } from './Effects';
+import { FoodKind, type Point } from './types';
 
 /** Pure drawing — reads game state, never mutates it. */
 export class Renderer {
@@ -11,6 +12,10 @@ export class Renderer {
     if (!ctx) throw new Error('2D canvas context unavailable');
     this.ctx = ctx;
     this.cellSize = canvas.width / board.cols;
+  }
+
+  get cellPixelSize(): number {
+    return this.cellSize;
   }
 
   clear(board: Board): void {
@@ -44,14 +49,28 @@ export class Renderer {
     });
   }
 
-  drawFood(cell: Point): void {
+  drawFood(cell: Point, kind: FoodKind = FoodKind.Normal): void {
     const { ctx, cellSize } = this;
     const cx = cell.x * cellSize + cellSize / 2;
     const cy = cell.y * cellSize + cellSize / 2;
+
+    if (kind === FoodKind.Bonus) {
+      const pulse = (Math.sin(performance.now() / 120) + 1) / 2;
+      ctx.fillStyle = '#facc15';
+      ctx.beginPath();
+      ctx.arc(cx, cy, cellSize / 2 - 2 + pulse * 2, 0, Math.PI * 2);
+      ctx.fill();
+      return;
+    }
+
     ctx.fillStyle = '#fb923c';
     ctx.beginPath();
     ctx.arc(cx, cy, cellSize / 2 - 3, 0, Math.PI * 2);
     ctx.fill();
+  }
+
+  drawEffects(effects: Effects): void {
+    effects.draw(this.ctx);
   }
 
   private drawCell(cell: Point, color: string, inset: number): void {

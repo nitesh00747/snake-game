@@ -52,12 +52,73 @@ body {
   margin-left: 6px;
 }
 
+.mute-toggle {
+  background: transparent;
+  border: 1px solid var(--muted);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.9rem;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.mute-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.mute-toggle[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .board-wrap {
   position: relative;
   border: 3px solid var(--accent);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 0 24px rgba(56, 189, 248, 0.25);
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+@keyframes flash-red {
+  0% {
+    box-shadow: 0 0 24px rgba(56, 189, 248, 0.25);
+    border-color: var(--accent);
+  }
+  30% {
+    box-shadow: 0 0 32px rgba(248, 113, 113, 0.65);
+    border-color: #f87171;
+  }
+  100% {
+    box-shadow: 0 0 24px rgba(56, 189, 248, 0.25);
+    border-color: var(--accent);
+  }
+}
+
+.board-wrap.shake {
+  animation:
+    shake 0.4s ease-in-out,
+    flash-red 0.5s ease-out;
 }
 
 canvas {

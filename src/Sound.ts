@@ -1,9 +1,19 @@
 /** Minimal beep-based SFX via the Web Audio API. No external assets. */
 export class Sound {
   private ctx: AudioContext | null = null;
+  private muted = false;
+
+  setMuted(muted: boolean): void {
+    this.muted = muted;
+  }
 
   eat(): void {
     this.beep(660, 90);
+  }
+
+  eatBonus(): void {
+    this.beep(880, 80);
+    setTimeout(() => this.beep(1180, 90), 70);
   }
 
   gameOver(): void {
@@ -12,6 +22,7 @@ export class Sound {
   }
 
   private beep(frequency: number, durationMs: number): void {
+    if (this.muted) return;
     const ctx = this.ensureContext();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();

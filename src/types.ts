@@ -30,3 +30,8 @@ export enum GameStatus {
   Paused = 'Paused',
   GameOver = 'GameOver',
 }
+
+export enum FoodKind {
+  Normal = 'Normal',
+  Bonus = 'Bonus',
+}

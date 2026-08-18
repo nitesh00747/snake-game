@@ -1,18 +1,20 @@
 import { Board } from './Board';
 import { Food } from './Food';
 import { Snake } from './Snake';
-import { Direction, GameStatus, type Point } from './types';
+import { Direction, FoodKind, GameStatus, type Point } from './types';
 
 export interface GameEvents {
   onScoreChange?(score: number): void;
   onStatusChange?(status: GameStatus): void;
-  onEat?(): void;
+  onEat?(at: Point, kind: FoodKind): void;
 }
 
 const START_LENGTH = 3;
 const BASE_TICK_MS = 180;
 const MIN_TICK_MS = 55;
 const SPEEDUP_PER_FOOD = 5;
+const NORMAL_FOOD_POINTS = 1;
+const BONUS_FOOD_POINTS = 5;
 
 /** Orchestrates Board + Snake + Food into one playable round. No rendering, no DOM. */
 export class Game {
@@ -59,6 +61,10 @@ export class Game {
     return this.food.cell;
   }
 
+  get foodKind(): FoodKind {
+    return this.food.currentKind;
+  }
+
   reset(): void {
     this.snake = this.createSnake();
     this.food = new Food(this.board, this.snake);
@@ -91,6 +97,8 @@ export class Game {
   tick(): void {
     if (this.status !== GameStatus.Running) return;
 
+    this.food.tick();
+
     let head = this.snake.step();
     if (!this.board.isInside(head)) {
       head = this.snake.wrapHead(this.board.cols, this.board.rows);
@@ -102,12 +110,14 @@ export class Game {
     }
 
     if (head.x === this.food.cell.x && head.y === this.food.cell.y) {
+      const kind = this.food.currentKind;
+      const points = kind === FoodKind.Bonus ? BONUS_FOOD_POINTS : NORMAL_FOOD_POINTS;
       this.snake.grow();
-      this.score += 1;
+      this.score += points;
       this.tickMs = Math.max(MIN_TICK_MS, BASE_TICK_MS - this.score * SPEEDUP_PER_FOOD);
       this.food.respawn(this.board, this.snake);
       this.events.onScoreChange?.(this.score);
-      this.events.onEat?.();
+      this.events.onEat?.(head, kind);
     }
   }
 
