@@ -2,48 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>OPERATION FALCON</title>
-    <style>
-      :root {
-        color-scheme: dark;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      html,
-      body {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background: #000;
-      }
-
-      body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-        /* Kill the tap-highlight / long-press menu on mobile. */
-        -webkit-tap-highlight-color: transparent;
-        -webkit-touch-callout: none;
-        user-select: none;
-      }
-
-      #screen {
-        display: block;
-        image-rendering: pixelated;
-        image-rendering: crisp-edges;
-        background: #000;
-      }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snake</title>
+    <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <canvas id="screen"></canvas>
+    <main class="app">
+      <header class="hud">
+        <div class="hud-item">
+          Score <span id="score">0</span>
+        </div>
+        <div class="hud-item">
+          Best <span id="best">0</span>
+        </div>
+      </header>
+
+      <div class="board-wrap">
+        <canvas id="board" width="1200" height="600"></canvas>
+        <div id="overlay" class="overlay">
+          <p id="overlay-title">Snake</p>
+          <p id="overlay-subtitle">Press Space or Enter to start</p>
+        </div>
+      </div>
+
+      <p class="hint">
+        Arrow keys / WASD to move &middot; Space to pause &middot; Enter to
+        restart after game over
+      </p>
+    </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

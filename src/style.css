@@ -1,0 +1,102 @@
+:root {
+  --bg: #0b131a;
+  --board-bg: #101c26;
+  --grid-line: #182a38;
+  --snake-head: #7dd3fc;
+  --snake-body: #0ea5e9;
+  --food: #fb923c;
+  --text: #e6edf3;
+  --muted: #86a0b3;
+  --accent: #38bdf8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: auto;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 24px;
+}
+
+.hud {
+  display: flex;
+  gap: 32px;
+  font-size: 1.1rem;
+  min-width: 1200px;
+  justify-content: space-between;
+}
+
+.hud-item span {
+  font-weight: 700;
+  color: var(--snake-head);
+  margin-left: 6px;
+}
+
+.board-wrap {
+  position: relative;
+  border: 3px solid var(--accent);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.25);
+}
+
+canvas {
+  display: block;
+  background: var(--board-bg);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(15, 21, 18, 0.82);
+  text-align: center;
+  transition: opacity 0.15s ease;
+}
+
+.overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#overlay-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--snake-head);
+}
+
+#overlay-subtitle {
+  margin: 0;
+  color: var(--muted);
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
