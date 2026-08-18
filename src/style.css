@@ -52,6 +52,26 @@ body {
   margin-left: 6px;
 }
 
+.mute-toggle {
+  background: transparent;
+  border: 1px solid var(--muted);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.9rem;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.mute-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.mute-toggle[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .board-wrap {
   position: relative;
   border: 3px solid var(--accent);
