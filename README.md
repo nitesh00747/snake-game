@@ -2,6 +2,8 @@
 
 A browser-based Snake game built with TypeScript and Vite.
 
+![Gameplay screenshot](screenshots/gameplay.png)
+
 ## Setup
 
 Requires [Node.js](https://nodejs.org/) (with npm).
